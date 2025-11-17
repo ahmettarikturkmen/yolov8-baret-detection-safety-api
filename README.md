@@ -1,4 +1,4 @@
-PROJE OZETI: BARET UYUMLULUK API'SI
+PROJE: Gelişmiş YOLOv8 modeli kullanılarak tasarlanmış, baret (hard hat) tespitine odaklanan tam kapsamlı bir güvenlik API'sıdır. FastAPI aracılığıyla görüntü ve video işleyebilir, tespit sonuçlarını Hugging Face LLM kullanarak resmi, doğal dil raporlarına dönüştürebilir.
 
 Bu proje, Yapay Zeka ile endustriyel guvenlik uyumlulugunu (Baret/Kask kullanimi) denetleyen, tam kapsamli bir API cozumudur.
 
