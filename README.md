@@ -1,31 +1,26 @@
-PROJE: Gelişmiş YOLOv8 modeli kullanılarak tasarlanmış, baret (hard hat) tespitine odaklanan tam kapsamlı bir güvenlik API'sıdır. FastAPI aracılığıyla görüntü ve video işleyebilir, tespit sonuçlarını Hugging Face LLM kullanarak resmi, doğal dil raporlarına dönüştürebilir.
+#  YZ Destekli Baret Tespit ve Güvenlik Sistemi
+# YOLOv8 & FastAPI & Streamlit
 
-Bu proje, Yapay Zeka ile endustriyel guvenlik uyumlulugunu (Baret/Kask kullanimi) denetleyen, tam kapsamli bir API cozumudur.
+##  Proje Tanımı
+Bu proje, endüstriyel sahalarda iş güvenliğini artırmak amacıyla geliştirilmiş, **Yapay Zeka** tabanlı bir baret (hard hat) tespit sistemidir. 
 
-TEMEL YETENEKLER
+Sistem, **YOLOv8** modelini kullanarak resim ve videolardaki çalışanları ve baret kullanım durumlarını anlık olarak tespit eder. **FastAPI** ile güvenli bir Backend servisi sunarken, **Streamlit** ile geliştirilen kullanıcı dostu arayüz üzerinden kolayca kontrol edilebilir.
 
-* Coklu Medya Analizi: Resim ve video dosyalarini analiz edebilme.
-* Anlik Tespit: YOLOv8 (Deep Learning) ile baret, baretsiz kafa ve kisi tespiti.
-* Otomatik Raporlama: Tespit sonuclarini, LLM (Buyuk Dil Modeli) kullanarak resmi metin raporlarina donusturme.
+##  Temel Yetenekler
 
-TEKNOLOJI OZETI
+* ** Güvenli API (Authentication):** API uç noktaları, yetkisiz erişimi engellemek için **API Key** korumasına sahiptir.
+* ** Çoklu Medya Analizi:** Hem **Resim** (.jpg, .png) hem de **Video** (.mp4) dosyalarını analiz edebilir.
+* ** Hassas Tespit:** YOLOv8 (Deep Learning) ile Baret, Baretsiz Kafa ve Kişi tespiti yapar.
+* ** Web Arayüzü:** Streamlit tabanlı modern arayüz sayesinde kod yazmadan sistem kullanılabilir.
+* ** Video İşleme:** Videoları kare kare işleyerek tespit kutularının çizildiği yeni bir video dosyası üretir.
 
-Proje, is ilaninda belirtilen kritik teknolojilerin tamamini kullanmaktadir:
+##  Teknoloji Yığını (Tech Stack)
 
-- YOLOv8: Nesne Tespiti (Goz)
-- FastAPI: Yuksek Hizli API Catisi (Web API)
-- Hugging Face: Dogal Dil Raporlama (LLM)
-- OpenCV: Goruntu/Video Isleme
-- Conda: Sanal Ortam Yonetimi (Anaconda)
+| Kategori | Teknoloji | Amaç |
+| :--- | :--- | :--- |
+| **Yapay Zeka** | **YOLOv8** | Nesne Tespiti (Object Detection) |
+| **Backend** | **FastAPI** | Yüksek performanslı ve güvenli API servisi |
+| **Frontend** | **Streamlit** | Kullanıcı Arayüzü (Web UI) |
+| **Görüntü İşleme** | **OpenCV (cv2)** | Video işleme ve çizim işlemleri |
+| **Dağıtım** | **NSSM** | API'yı Windows Servisi olarak sürekli çalıştırma |
 
-API UC NOKTALARI (Endpoints)
-
-- /analyze_image: Resim yukleme (Cikti: JSON Raporu + Base64 Kareli Resim).
-- /analyze_video: Video yukleme (Cikti: Işlenmiş .mp4 Dosyasi).
-- /docs: Swagger UI (API'yi tarayicida test etme arayuzu).
-
-BASLANGIC KOMUTU
-
-Proje klasorunde ortamınızı aktifleştirdikten sonra (Conda ile) bu komutla calistirin:
-
-uvicorn main:app --reload
