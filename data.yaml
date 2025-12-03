@@ -1,16 +1,13 @@
 path: . 
+
 train: train/images
-
-
-val: test/images 
+val: test/images # validation 
 test: test/images
 
-
-nc: 3
+nc: 3 # Number of Classes
 names: ['head', 'helmet', 'person']
 
-
-roboflow:
+roboflow: #dataset kaynağım
   workspace: joseph-nelson
   project: hard-hat-workers
   version: 1

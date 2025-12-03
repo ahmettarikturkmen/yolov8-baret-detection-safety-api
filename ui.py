@@ -1,11 +1,9 @@
-# ui.py - KULLANICI ARAYÜZÜ (LLM YOK, SADECE TESPİT)
-import streamlit as st
-import requests
+import streamlit as st #pyton ile web ui lib
+import requests #Api (main.py) ile iletişim
 import base64
 from PIL import Image
 from io import BytesIO
 
-# --- AYARLAR ---
 API_URL = "http://127.0.0.1:8000/api/v1"
 
 st.set_page_config(
@@ -14,21 +12,17 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- BAŞLIK ---
 st.title(" YZ Destekli Baret Tespit Sistemi")
 st.markdown("""
-Bu panel, sahadan gelen görüntüleri **YOLOv8** ile analiz eder ve güvenlik ihlallerini görselleştirir.
+Bu panel, sahadan gelen görüntüleri **YOLOv8** ile analiz eder ve görselleştirir.
 """)
 
-# --- YAN MENÜ ---
 with st.sidebar:
     st.header(" Yetkili Girişi")
     api_key = st.text_input("API Anahtarı (x-api-key)", type="password")
-    st.info(" Şifre: `aygaz_secret_2025`")
-    st.divider()
-    st.write("© 2025 Aygaz Ar-Ge Aday Projesi")
+    st.info(" Şifre: `aygaz_2025`")
 
-# --- DOSYA YÜKLEME ---
+# DOSYA YÜKLEME
 uploaded_file = st.file_uploader(
     "Analiz için Resim veya Video Yükleyin", 
     type=['jpg', 'jpeg', 'png', 'mp4', 'avi']
@@ -60,10 +54,10 @@ if uploaded_file is not None:
                 status_box = st.status("Yapay Zeka çalışıyor...", expanded=True)
                 
                 try:
-                    # --- RESİM ANALİZİ ---
+                    # RESİM ANALİZİ VE HATA YÖNETİMİ
                     if file_type == 'image':
                         status_box.write(" Resim API'ye gönderiliyor...")
-                        response = requests.post(f"{API_URL}/analyze_image", headers=headers, files=files)
+                        response = requests.post(f"{API_URL}/analyze_image", headers=headers, files=files) # post isteği
                         
                         if response.status_code == 200:
                             result = response.json()
@@ -71,12 +65,12 @@ if uploaded_file is not None:
                             
                             st.success(f"Sonuç: {result['message']}")
                             
-                            # 1. KARELİ RESİM
+                            # KARELİ RESİM SONUCU
                             if result['visual_output_b64']:
                                 image_bytes = base64.b64decode(result['visual_output_b64'])
                                 st.image(image_bytes, caption="Tespit Sonuçları", use_container_width=True)
                             
-                            # 2. İSTATİSTİKLER (Rapor yerine sadece sayıları gösteriyoruz)
+                            # İSTATİSTİKLER 
                             st.info(" **Tespit İstatistikleri**")
                             dets = result['detections']
                             m1, m2, m3 = st.columns(3)
@@ -90,7 +84,7 @@ if uploaded_file is not None:
                         else:
                             st.error(f"Sunucu Hatası: {response.text}")
 
-                    # --- VİDEO ANALİZİ ---
+                    # VİDEO ANALİZİ VE HATA YÖNETİMİ
                     elif file_type == 'video':
                         status_box.write(" Video işleniyor... Bu işlem biraz sürebilir.")
                         response = requests.post(f"{API_URL}/analyze_video", headers=headers, files=files)

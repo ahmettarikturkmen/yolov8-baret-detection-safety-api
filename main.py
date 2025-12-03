@@ -1,4 +1,3 @@
-# main.py - SADELEŞTİRİLMİŞ FİNAL SÜRÜM (LLM YOK)
 from fastapi import FastAPI, UploadFile, File, HTTPException, Security, Depends
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.responses import Response, FileResponse
@@ -13,12 +12,13 @@ import cv2
 import numpy as np 
 import shutil
 
-# --- GÜVENLİK AYARLARI ---
-API_KEY = "aygaz_secret_2025" 
+# GÜVENLİK AYARLARI api auth
+API_KEY = "aygaz_2025" 
 API_KEY_NAME = "x-api-key"
 
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
-
+#API'yı korumak için API Key tabanlı bir kimlik doğrulama sistemi. 
+# Gelen her isteğin Header kısmında x-api-key arar.yoksa hata verir.
 async def get_api_key(api_key_header: str = Security(api_key_header)):
     if api_key_header == API_KEY:
         return api_key_header
@@ -28,7 +28,7 @@ async def get_api_key(api_key_header: str = Security(api_key_header)):
             detail=" GEÇERSİZ API ANAHTARI! Giriş reddedildi."
         )
 
-# --- MODEL VE AYARLAR ---
+#  MODEL VE AYARLAR -best.pt dosyasını belleğe yükler.
 TRAINED_MODEL_PATH = 'runs/detect/hard_hat_run/weights/best.pt'
 CONFIDENCE_LEVEL = 0.25 
 
@@ -39,19 +39,18 @@ try:
 except Exception:
     pass
 
-# --- Pydantic Modelleri (LLM Raporu Çıkarıldı) ---
+# API'dan dönecek cevabın şablonudur.
 class SafetyReportResponse(BaseModel):
     status: str
     message: str
     detections: dict
-    # llm_report satırı silindi
     visual_output_b64: str | None = None 
 
 app = FastAPI(title="Aygaz Güvenlik API (Secured)")
 
-# =======================================================================
-# 1. RESİM ANALİZİ (LLM SİZ)
-# =======================================================================
+
+# RESİM ANALİZİ ENDPOİNT
+
 @app.post("/api/v1/analyze_image", response_model=SafetyReportResponse)
 async def analyze_image(
     file: UploadFile = File(...),
@@ -77,15 +76,14 @@ async def analyze_image(
                 if name in ['head', 'helmet', 'person']:
                     detected_person += 1
             
-            im_np = r.plot() 
-            im_bgr = cv2.cvtColor(im_np, cv2.COLOR_RGB2BGR) 
+            im_np = r.plot() #r.plot() ile kutuları çizer
+            im_bgr = cv2.cvtColor(im_np, cv2.COLOR_BGR2RGB)#cv2 ile renkleri düzelt (RGB)
             is_success, buffer = cv2.imencode(".jpg", im_bgr)
             io_buf = io.BytesIO(buffer)
             visual_b64 = base64.b64encode(io_buf.getvalue()).decode('utf-8')
             break 
     
-    # LLM Raporu oluşturma kısmı SİLİNDİ.
-
+    
     return SafetyReportResponse(
         status="SUCCESS" if yolo_model else "PENDING_TRAINING",
         message=f"{detected_person} kişi tespit edildi.",
@@ -93,9 +91,9 @@ async def analyze_image(
         visual_output_b64=visual_b64
     )
 
-# =======================================================================
-# 2. VİDEO ANALİZİ (Aynı Kalıyor)
-# =======================================================================
+
+# VİDEO ANALİZİ ENDPOİNT
+
 @app.post("/api/v1/analyze_video")
 async def analyze_video(
     file: UploadFile = File(...),
@@ -121,7 +119,7 @@ async def analyze_video(
     fourcc = cv2.VideoWriter_fourcc(*'mp4v') 
     out = cv2.VideoWriter(temp_output, fourcc, fps, (width, height))
 
-    while cap.isOpened():
+    while cap.isOpened(): #OpenCV ile videoyu kare kare okuyan döngü 
         ret, frame = cap.read()
         if not ret:
             break 
